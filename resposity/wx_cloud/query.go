@@ -81,8 +81,10 @@ func clientPost(url string, req map[string]interface{}) ([]byte, error) {
 
 	respdata, _ := json.Marshal(req)
 	request, _ := http.NewRequest("POST", url, bytes.NewReader(respdata))
-	resp, _ := client.Do(request)
-	body, _ := ioutil.ReadAll(resp.Body)
+	resp, err := client.Do(request)
+	fmt.Println("err: ", err)
+	body, err := ioutil.ReadAll(resp.Body)
+	fmt.Println("err: ", err)
 
 	return body, nil
 }
