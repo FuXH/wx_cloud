@@ -64,12 +64,19 @@ func QueryClassInfo(w http.ResponseWriter, r *http.Request) {
 // RecordAnswer 记录错题
 func RecordAnswer(w http.ResponseWriter, r *http.Request) {
 	_ = r.ParseForm()
+	classID := r.FormValue("classId")
+	openID := r.FormValue("openId")
+	wrongIDs := r.FormValue("wrongIds")
 	wrongInfo := &entity.TWrongInfo{
-		ClassID: r.FormValue("classId"),
-		OpenID: r.FormValue("openId"),
-		WrongIDs: r.FormValue("wrongIds"),
+		ClassID: classID,
+		OpenID: openID,
+		WrongIDs: wrongIDs,
 	}
 
+	if err := wx_cloud.DeleteWrongInfo(classID, openID); err != nil {
+		fmt.Printf("RecordAnswer-DeleteWrongInfo fail, err: %v\n", err)
+		return
+	}
 	if err := wx_cloud.InsertWrongInfo(wrongInfo); err != nil {
 		fmt.Printf("RecordAnswer fail, err: %v\n", err)
 		return

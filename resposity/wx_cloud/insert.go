@@ -75,3 +75,18 @@ func InsertWrongInfo(wrongInfo *entity.TWrongInfo) error {
 
 	return nil
 }
+
+
+// DeleteWrongInfo
+func DeleteWrongInfo(classID, openID string) error {
+	url := fmt.Sprintf("http://api.weixin.qq.com/tcb/databaseadd?access_token=%s", GetAccessToken())
+	req := map[string]interface{}{
+		"env":   "cloud1-4g2pzysxb452412a",
+		"query": fmt.Sprintf(`db.collection(\"t_wrong_info\").where({classId:%s,openId:%s}).remove()`,
+			classID, openID),
+	}
+	rsp, _ := clientPost(url, req)
+	fmt.Printf("DeleteWrongInfo rsp: %v\n", string(rsp))
+
+	return nil
+}
