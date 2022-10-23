@@ -2,7 +2,7 @@ package entity
 
 // TWrongInfo
 type TWrongInfo struct {
-	ClassID  string `gorm:"column:classId"`
-	OpenID   string `gorm:"column:openId"`
-	WrongIDs string `gorm:"column:wrongIds"`
+	ClassID  string `json:"classId"`
+	OpenID   string `json:"openId"`
+	WrongIDs string `json:"wrongIds"`
 }

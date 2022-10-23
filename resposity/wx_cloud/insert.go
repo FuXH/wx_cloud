@@ -61,3 +61,17 @@ func InsertClassInfo(classInfo *entity.TClassInfo) error {
 
 	return nil
 }
+
+func InsertWrongInfo(wrongInfo *entity.TWrongInfo) error {
+	url := fmt.Sprintf("http://api.weixin.qq.com/tcb/databaseadd?access_token=%s", GetAccessToken())
+	body, _ := json.Marshal(wrongInfo)
+	req := map[string]interface{}{
+		"env":   "cloud1-4g2pzysxb452412a",
+		"query": fmt.Sprintf(`db.collection(\"t_wrong_info\").add({data:[%s]})`,
+			string(body)),
+	}
+	rsp, _ := clientPost(url, req)
+	fmt.Printf("InsertWrongInfo rsp: %v\n", string(rsp))
+
+	return nil
+}

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"wx_cloud/entity"
 
 	"wx_cloud/parse"
 	"wx_cloud/resposity/wx_cloud"
@@ -60,12 +61,33 @@ func QueryClassInfo(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(rsp)
 }
 
-// JudgeAnswer 判断得分，并记录错题
-func JudgeAnswer(w http.ResponseWriter, r *http.Request) {
+// RecordAnswer 记录错题
+func RecordAnswer(w http.ResponseWriter, r *http.Request) {
+	_ = r.ParseForm()
+	wrongInfo := &entity.TWrongInfo{
+		ClassID: r.FormValue("classId"),
+		OpenID: r.FormValue("openId"),
+		WrongIDs: r.FormValue("wrongIds"),
+	}
 
+	if err := wx_cloud.InsertWrongInfo(wrongInfo); err != nil {
+		fmt.Printf("RecordAnswer fail, err: %v\n", err)
+		return
+	}
 }
 
 // QueryClassWrongInfo 根据classId和openId获取课堂的错题
 func QueryClassWrongInfo(w http.ResponseWriter, r *http.Request) {
+	_ = r.ParseForm()
+	classID := r.FormValue("classId")
+	openID := r.FormValue("openId")
 
+	twrongInfo, err := wx_cloud.QueryClassWrongInfo(classID, openID)
+	if err != nil {
+		fmt.Printf("QueryClassWrongInfo fail, err: %v\n", err)
+		return
+	}
+
+	rsp, _ := json.Marshal(twrongInfo)
+	_, _ = w.Write(rsp)
 }

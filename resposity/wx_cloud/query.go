@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"wx_cloud/entity"
 )
@@ -72,6 +74,54 @@ func QueryClassInfo(classID string) (*entity.TClassInfo, error) {
 		Questions: []*entity.QuestionInfo{},
 	}
 	_ = json.Unmarshal([]byte(tmp.Questions), &res.Questions)
+
+	return res, nil
+}
+
+func QueryClassWrongInfo(classID, openID string) (*entity.TClassInfo, error) {
+	classInfo, _ := QueryClassInfo(classID)
+	wrongInfo, _ := queryWrongInfoByOpenID(classID, openID)
+
+	res := &entity.TClassInfo{
+		ClassID: classID,
+		Questions: []*entity.QuestionInfo{},
+	}
+	wrongIDs := strings.Split(wrongInfo.WrongIDs, ",")
+	for _, val := range wrongIDs {
+		questionIndex, _ := strconv.Atoi(val)
+		res.Questions = append(res.Questions, classInfo.Questions[questionIndex])
+	}
+	for _, val := range res.Questions {
+		for _, option := range val.Options {
+			if option.Value == val.Right {
+				option.Checked = "true"
+			}
+		}
+	}
+	return res, nil
+}
+
+func queryWrongInfoByOpenID(classID, openID string) (*entity.TWrongInfo, error) {
+	url := fmt.Sprintf("http://api.weixin.qq.com/tcb/databasequery?access_token=%s", GetAccessToken())
+	req := map[string]interface{}{
+		"env":   "cloud1-4g2pzysxb452412a",
+		"query": fmt.Sprintf(`db.collection(\"t_wrong_info\").where({classId:\"%s\",openId:\"%s\"}).get()`,
+			classID, openID),
+	}
+	body, _ := clientPost(url, req)
+
+	resData := &ResData{}
+	if err := json.Unmarshal(body, &resData); err != nil {
+		fmt.Println("err: ", err)
+		return nil, err
+	}
+	if len(resData.Data) == 0 {
+		return nil, nil
+	}
+
+	fmt.Println("resData: ", resData.Data[0])
+	res := &entity.TWrongInfo{}
+	_ = json.Unmarshal([]byte(resData.Data[0]), res)
 
 	return res, nil
 }

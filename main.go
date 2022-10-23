@@ -38,8 +38,8 @@ func main() {
 	http.HandleFunc("/", service.GetIndex)
 	http.HandleFunc("/parse_excel_file", service.ParseExcelFile)
 	http.HandleFunc("/query_class_info", service.QueryClassInfo)
-	//http.HandleFunc("/judge_answer", service.JudgeAnswer)
-	//http.HandleFunc("/query_class_wrong_info", service.QueryClassWrongInfo)
+	http.HandleFunc("/record_answer", service.RecordAnswer)
+	http.HandleFunc("/query_class_wrong_info", service.QueryClassWrongInfo)
 	//
 	log.Fatal(http.ListenAndServe(":80", nil))
 }
