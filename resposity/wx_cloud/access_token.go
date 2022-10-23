@@ -74,7 +74,9 @@ func clientPost(url string, req map[string]interface{}) ([]byte, error) {
 	client := &http.Client{}
 
 	respdata, _ := json.Marshal(req)
-	request, _ := http.NewRequest("POST", url, bytes.NewReader(respdata))
+	request, err := http.NewRequest("POST", url, bytes.NewReader(respdata))
+	request.Header.Set("Content-Type", "application/json")
+	fmt.Println("err: ", err)
 	resp, err := client.Do(request)
 	fmt.Println("err: ", err)
 	body, err := ioutil.ReadAll(resp.Body)

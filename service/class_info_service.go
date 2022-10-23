@@ -123,6 +123,7 @@ func RecordHomework(w http.ResponseWriter, r *http.Request) {
 func QueryHomework(w http.ResponseWriter, r *http.Request) {
 	_ = r.ParseForm()
 	openID := r.FormValue("openId")
+	fmt.Println("openId: ", openID)
 
 	thomework, err := wx_cloud.QueryHomework(openID)
 	if err != nil {

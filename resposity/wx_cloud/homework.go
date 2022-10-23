@@ -15,13 +15,15 @@ const (
 func InsertHomework(homework *entity.THomework) error {
 	url := fmt.Sprintf("http://api.weixin.qq.com/tcb/databaseadd?access_token=%s", GetAccessToken())
 	body, _ := json.Marshal(homework)
+	sql := fmt.Sprintf(`db.collection(\"%s\").add({data:[%s]})`,
+		homeworkTable, string(body))
+	fmt.Println("sql: ", sql)
 	req := map[string]interface{}{
-		"env": "cloud1-4g2pzysxb452412a",
-		"query": fmt.Sprintf(`db.collection(\"%s\").add({data:[%s]})`,
-			homeworkTable, string(body)),
+		"env":   "cloud1-4g2pzysxb452412a",
+		"query": sql,
 	}
-	rsp, _ := clientPost(url, req)
-	fmt.Printf("InsertWrongInfo rsp: %v\n", string(rsp))
+	rsp, err := clientPost(url, req)
+	fmt.Printf("InsertWrongInfo rsp: %v, err: %v\n", string(rsp), err)
 
 	return nil
 }
@@ -58,12 +60,12 @@ func QueryHomework(openID string) ([]*entity.THomework, error) {
 
 	for _, val := range res {
 		var realHomework *entity.HomeInfo
-		for _, tmp := range val.Infos {
+		for _, tmp := range val.Datas {
 			if levelInfo.Level == tmp.Level {
 				realHomework = tmp
 			}
 		}
-		val.Infos = []*entity.HomeInfo{realHomework}
+		val.Datas = []*entity.HomeInfo{realHomework}
 	}
 
 	return res, nil

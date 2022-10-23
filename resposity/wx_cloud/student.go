@@ -54,13 +54,17 @@ func QueryStudentLevel(school, grade, class string, student string) (*entity.TSt
 // QueryStudentInfo 查询学生的信息
 func QueryStudentInfo(openID string) (*entity.TStudent, error) {
 	url := fmt.Sprintf("http://api.weixin.qq.com/tcb/databasequery?access_token=%s", GetAccessToken())
+	sql := fmt.Sprintf(`db.collection(\"%s\").where({
+		_openid:\"%s\"
+	}).get()`,
+		studentTable, openID)
+	fmt.Println("sql: ", sql)
 	req := map[string]interface{}{
-		"env": "cloud1-4g2pzysxb452412a",
-		"query": fmt.Sprintf(`db.collection(\"%s\").where({openId:\"%s\"}).get()`,
-			studentTable, openID),
+		"env":   "cloud1-4g2pzysxb452412a",
+		"query": sql,
 	}
 	body, _ := clientPost(url, req)
-
+	fmt.Println("bpdy: ", string(body))
 	resData := &ResData{}
 	if err := json.Unmarshal(body, &resData); err != nil {
 		fmt.Println("err: ", err)
