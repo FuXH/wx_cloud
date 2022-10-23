@@ -61,6 +61,7 @@ func QueryClassInfo(classID string) (*entity.TClassInfo, error) {
 		return nil, nil
 	}
 
+	fmt.Println("resData: ", resData.Data[0])
 	tmp := &struct {
 		ClassID   string `json:"classId"`
 		Questions string `json:"questions"`

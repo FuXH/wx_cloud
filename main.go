@@ -35,6 +35,7 @@ func main() {
 	//}
 	//fmt.Println(err)
 
+	http.HandleFunc("/", service.GetIndex)
 	http.HandleFunc("/parse_excel_file", service.ParseExcelFile)
 	http.HandleFunc("/query_class_info", service.QueryClassInfo)
 	//http.HandleFunc("/judge_answer", service.JudgeAnswer)

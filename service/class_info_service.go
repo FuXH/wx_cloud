@@ -3,11 +3,21 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"wx_cloud/parse"
 	"wx_cloud/resposity/wx_cloud"
 )
+
+func GetIndex(w http.ResponseWriter, r *http.Request) {
+	data, err := ioutil.ReadFile("./index.html")
+	if err != nil {
+		_, _ = fmt.Fprint(w, "内部错误")
+		return
+	}
+	_, _ = fmt.Fprint(w, string(data))
+}
 
 // ParseExcelFile 接收并解析excel文件
 func ParseExcelFile(w http.ResponseWriter, r *http.Request) {
@@ -38,6 +48,7 @@ func ParseExcelFile(w http.ResponseWriter, r *http.Request) {
 func QueryClassInfo(w http.ResponseWriter, r *http.Request) {
 	_ = r.ParseForm()
 	classID := r.FormValue("classId")
+	fmt.Println("classId: ", classID)
 
 	tclassInfo, err := wx_cloud.QueryClassInfo(classID)
 	if err != nil {

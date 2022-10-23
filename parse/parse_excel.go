@@ -16,7 +16,8 @@ func ParseExcelFile(fileName string) (*entity.TClass, *entity.TClassInfo, error)
 		return nil, nil, err
 	}
 
-	tclass, tclassInfo := convertToClassInfo(datas)
+	classID := genClassID()
+	tclass, tclassInfo := convertToClassInfo(classID, datas)
 
 	return tclass, tclassInfo, nil
 }
@@ -46,10 +47,12 @@ func readExcel(fileName string) ([]string, error) {
 	return res, nil
 }
 
-func convertToClassInfo(datas []string) (*entity.TClass, *entity.TClassInfo) {
-	tclass := &entity.TClass{}
+func convertToClassInfo(classID string, datas []string) (*entity.TClass, *entity.TClassInfo) {
+	tclass := &entity.TClass{
+		ClassID: classID,
+	}
 	tclassInfo := &entity.TClassInfo{
-		ClassID:   genClassID(),
+		ClassID:   classID,
 		Questions: make([]*entity.QuestionInfo, 0),
 	}
 	questionID := 0
