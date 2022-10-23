@@ -1,6 +1,7 @@
 package parse
 
 import (
+	"fmt"
 	"strings"
 	"wx_cloud/entity"
 )
@@ -13,6 +14,10 @@ func ParseHomeworkFile(fileName string) (*entity.THomework, error) {
 	}
 
 	thomework := convertToHomework(datas)
+	fmt.Println(thomework)
+	for _, val := range thomework.Datas {
+		fmt.Println(val)
+	}
 
 	return thomework, nil
 }
@@ -48,7 +53,7 @@ func convertToHomework(datas []string) *entity.THomework {
 						content = append(content, datas[i+j+z])
 					}
 					tmp.Content = strings.Join(content, ",")
-					homework.Infos = append(homework.Infos, tmp)
+					homework.Datas = append(homework.Datas, tmp)
 
 				} else if datas[i+j] == "等级2" {
 					tmp := &entity.HomeInfo{
@@ -64,7 +69,7 @@ func convertToHomework(datas []string) *entity.THomework {
 						content = append(content, datas[i+j+z])
 					}
 					tmp.Content = strings.Join(content, ",")
-					homework.Infos = append(homework.Infos, tmp)
+					homework.Datas = append(homework.Datas, tmp)
 
 				} else if datas[i+j] == "等级3" {
 					tmp := &entity.HomeInfo{
@@ -80,7 +85,7 @@ func convertToHomework(datas []string) *entity.THomework {
 						content = append(content, datas[i+j+z])
 					}
 					tmp.Content = strings.Join(content, ",")
-					homework.Infos = append(homework.Infos, tmp)
+					homework.Datas = append(homework.Datas, tmp)
 				}
 			}
 		}
