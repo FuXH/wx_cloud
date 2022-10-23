@@ -19,7 +19,7 @@ type ResData struct {
 
 // QueryClassList 查询课堂信息
 func QueryClassList(school, grade, class string) ([]*entity.TClass, error) {
-	url := fmt.Sprintf("https://api.weixin.qq.com/tcb/databasequery?access_token=%s", GetAccessToken())
+	url := fmt.Sprintf("http://api.weixin.qq.com/tcb/databasequery?access_token=%s", GetAccessToken())
 	req := map[string]interface{}{
 		"env": "cloud1-4g2pzysxb452412a",
 		"query": fmt.Sprintf(`db.collection(\"t_class\").where({school:\"%s\",grade:\"%s\",class:\"%s\"}).get()`,
@@ -45,7 +45,7 @@ func QueryClassList(school, grade, class string) ([]*entity.TClass, error) {
 
 // QueryClassInfo 查询课堂题目
 func QueryClassInfo(classID string) (*entity.TClassInfo, error) {
-	url := fmt.Sprintf("https://api.weixin.qq.com/tcb/databasequery?access_token=%s", GetAccessToken())
+	url := fmt.Sprintf("http://api.weixin.qq.com/tcb/databasequery?access_token=%s", GetAccessToken())
 	req := map[string]interface{}{
 		"env":   "cloud1-4g2pzysxb452412a",
 		"query": fmt.Sprintf(`db.collection(\"t_class_info\").where({classId:\"%s\"}).get()`, classID),

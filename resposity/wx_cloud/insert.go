@@ -8,7 +8,7 @@ import (
 
 // InsertClass 记录课堂信息
 func InsertClass(class *entity.TClass) error {
-	url := fmt.Sprintf("https://api.weixin.qq.com/tcb/databaseadd?access_token=%s", GetAccessToken())
+	url := fmt.Sprintf("http://api.weixin.qq.com/tcb/databaseadd?access_token=%s", GetAccessToken())
 	body, _ := json.Marshal(class)
 	req := map[string]interface{}{
 		"env":   "cloud1-4g2pzysxb452412a",
@@ -33,18 +33,8 @@ func InsertClass(class *entity.TClass) error {
 
 // InsertClassInfo 记录课堂题目
 func InsertClassInfo(classInfo *entity.TClassInfo) error {
-	url := fmt.Sprintf("https://api.weixin.qq.com/tcb/databaseadd?access_token=%s", GetAccessToken())
-	questions, err := json.Marshal(classInfo.Questions)
-	fmt.Println("err: ", err)
-	//tmp := &struct {
-	//	ClassID   string `json:"classId"`
-	//	Questions string `json:"questions"`
-	//}{
-	//	ClassID:   classInfo.ClassID,
-	//	Questions: string(questions),
-	//}
-	//body, err := json.Marshal(tmp)
-	//fmt.Println("err: ", err)
+	url := fmt.Sprintf("http://api.weixin.qq.com/tcb/databaseadd?access_token=%s", GetAccessToken())
+	questions, _ := json.Marshal(classInfo.Questions)
 	sql := fmt.Sprintf(`db.collection(\"t_class_info\").add({data:[{
 		'classId': '%s',
 		'questions': '%s'
