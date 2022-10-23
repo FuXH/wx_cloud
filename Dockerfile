@@ -20,7 +20,7 @@ FROM alpine:3.13
 # 使用 HTTPS 协议访问容器云调用证书安装
 RUN apk add ca-certificates
 
-COPY wx_cloud /app/
+COPY --from=builder /app/wx_cloud /app/index.html /app/
 
 # 指定运行时的工作目录
 WORKDIR /app
