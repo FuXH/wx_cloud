@@ -1,6 +1,7 @@
 package wx_cloud
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -13,6 +14,13 @@ var (
 	appid       = "wx1c33302ebfbc9daf"
 	secret      = "191b8dc68f0197c4d2cf6fdfc4c2cd34"
 )
+
+// ResData
+type ResData struct {
+	Errcode int      `json:"errcode"`
+	Errmsg  string   `json:"errmsg"`
+	Data    []string `json:"data"`
+}
 
 // GetAccessToken
 func GetAccessToken() string {
@@ -60,4 +68,17 @@ func initAccessToken() error {
 	}
 	accessToken = rsp.AccessToken
 	return nil
+}
+
+func clientPost(url string, req map[string]interface{}) ([]byte, error) {
+	client := &http.Client{}
+
+	respdata, _ := json.Marshal(req)
+	request, _ := http.NewRequest("POST", url, bytes.NewReader(respdata))
+	resp, err := client.Do(request)
+	fmt.Println("err: ", err)
+	body, err := ioutil.ReadAll(resp.Body)
+	fmt.Println("err: ", err)
+
+	return body, nil
 }

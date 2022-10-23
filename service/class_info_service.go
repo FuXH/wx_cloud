@@ -11,6 +11,7 @@ import (
 	"wx_cloud/resposity/wx_cloud"
 )
 
+// GetIndex 获取html页面
 func GetIndex(w http.ResponseWriter, r *http.Request) {
 	data, err := ioutil.ReadFile("./index.html")
 	if err != nil {
@@ -20,13 +21,13 @@ func GetIndex(w http.ResponseWriter, r *http.Request) {
 	_, _ = fmt.Fprint(w, string(data))
 }
 
-// ParseExcelFile 接收并解析excel文件
+// ParseExcelFile 解析课堂练习题目文件
 func ParseExcelFile(w http.ResponseWriter, r *http.Request) {
 	_ = r.ParseForm()
 	fileName := r.FormValue("filename")
 
 	// 解析excel
-	tclass, tclassInfo, err := parse.ParseExcelFile(fileName)
+	tclass, tclassInfo, err := parse.ParseClassFile(fileName)
 	if err != nil {
 		fmt.Printf("InsertClass fail, err: %v\n", err)
 		return
@@ -68,8 +69,8 @@ func RecordAnswer(w http.ResponseWriter, r *http.Request) {
 	openID := r.FormValue("openId")
 	wrongIDs := r.FormValue("wrongIds")
 	wrongInfo := &entity.TWrongInfo{
-		ClassID: classID,
-		OpenID: openID,
+		ClassID:  classID,
+		OpenID:   openID,
 		WrongIDs: wrongIDs,
 	}
 
@@ -97,4 +98,58 @@ func QueryClassWrongInfo(w http.ResponseWriter, r *http.Request) {
 
 	rsp, _ := json.Marshal(twrongInfo)
 	_, _ = w.Write(rsp)
+}
+
+// RecordHomework 解析老师布置的作业文件
+func RecordHomework(w http.ResponseWriter, r *http.Request) {
+	_ = r.ParseForm()
+	fileName := r.FormValue("filename")
+
+	// 解析excel
+	thomework, err := parse.ParseHomeworkFile(fileName)
+	if err != nil {
+		fmt.Printf("RecordHomework fail, err: %v\n", err)
+		return
+	}
+
+	// 记录作业信息
+	if err := wx_cloud.InsertHomework(thomework); err != nil {
+		fmt.Printf("RecordHomework fail, err: %v\n", err)
+		return
+	}
+}
+
+// QueryHomework 查询学生对应的作业列表
+func QueryHomework(w http.ResponseWriter, r *http.Request) {
+	_ = r.ParseForm()
+	openID := r.FormValue("openId")
+
+	thomework, err := wx_cloud.QueryHomework(openID)
+	if err != nil {
+		fmt.Printf("QueryHomework fail, err: %v\n", err)
+		return
+	}
+
+	rsp, _ := json.Marshal(thomework)
+	_, _ = w.Write(rsp)
+}
+
+// ParseStudentLevel 解析学生等级文件
+func ParseStudentLevel(w http.ResponseWriter, r *http.Request) {
+	_ = r.ParseForm()
+	fileName := r.FormValue("filename")
+
+	// 解析excel
+	tstudentLavel, err := parse.ParseStudentLevel(fileName)
+	if err != nil {
+		fmt.Printf("RecordHomework fail, err: %v\n", err)
+		return
+	}
+
+	for _, val := range tstudentLavel {
+		if err := wx_cloud.InsertStudentLeval(val); err != nil {
+			fmt.Printf("ParseStudentLevel fail, err: %v\n", err)
+			return
+		}
+	}
 }
